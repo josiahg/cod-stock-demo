@@ -19,9 +19,9 @@ import (
 )
 
 /* TODO:
-Add single stock page view
-- Charts?
-Add search function
+- Bug fixes/hardening
+- Routing back from single stock page
+- UI refresh?
 
 5. Bonus:
 Fetch Tweets
@@ -74,15 +74,14 @@ func main() {
 	defer db.Close()
 
 	//dropAndCreateDBTable(db)
+
 	parseTS("IBM")
 	parseTS("CLDR")
+	parseTS("MSFT")
 
-	//testCLDR := quote{"CLDR", 12.40}
-	//testMSFT := quote{"MSFT", 200.12}
-	//putTickerDB(fetchTicker("msft"), db)
+	putTickerDB(fetchTicker("msft"), db)
 	putTickerDB(fetchTicker("IBM"), db)
-	//putTickerDB(testCLDR, db)
-	//putTickerDB(testMSFT, db)
+	putTickerDB(fetchTicker("CLDR"), db)
 
 	router := gin.Default()
 
@@ -266,9 +265,7 @@ func parseTS(symbol string) {
 
 	log.Println("Upsert value rows...")
 	for key, value := range times {
-		//log.Println(t.Unix())
 		vals := value.(map[string]interface{})
-		//log.Println(vals["4. close"])
 
 		closeprice, err := strconv.ParseFloat(vals["4. close"].(string), 32)
 		if err != nil {
