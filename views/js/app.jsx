@@ -12,8 +12,7 @@ class Quotes extends React.Component {
 						<div class="card text-center">
 							<div class="card-body">
 								<h5 class="card-title">{quote.symbol}</h5>
-								{/*<h6 class="card-subtitle mb-2 text-muted">{quote.price}</h6>*/}
-								<p class="card-text">{quote.price} ({quote.changep})</p>
+                                <p class="card-text" >${quote.price} <span style={{color: parseFloat(quote.changep) >= 0 ? "green" : "red"}}>({quote.changep})</span></p>
 							</div>
 						</div>
 					))}
@@ -46,43 +45,7 @@ class SingleStock extends React.Component {
 			})
 			.catch(console.log)
 	}
-	/*
-	 *"2020-08-17 11:00:00": {
-			"1. open": "125.3000",
-			"2. high": "125.3750",
-			"3. low": "125.2100",
-			"4. close": "125.2200",
-			"5. volume": "41169"
-		},
-		"2020-08-17 10:55:00": {
-			"1. open": "125.0650",
-			"2. high": "125.3400",
-			"3. low": "125.0300",
-			"4. close": "125.2900",
-			"5. volume": "71923"
-		},
-		"2020-08-17 10:50:00": {
-			"1. open": "124.9100",
-			"2. high": "125.0600",
-			"3. low": "124.9100",
-			"4. close": "125.0300",
-			"5. volume": "48198"
-		},
-		"2020-08-17 10:45:00": {
-			"1. open": "124.7950",
-			"2. high": "124.9500",
-			"3. low": "124.7800",
-			"4. close": "124.8900",
-			"5. volume": "33126"
-		},
-		"2020-08-17 10:40:00": {
-			"1. open": "124.9200",
-			"2. high": "124.9600",
-			"3. low": "124.7650",
-			"4. close": "124.7750",
-			"5. volume": "37698"
-		},
-		*/
+
 	render() {
 		const { isLoaded, intra } = this.state
 

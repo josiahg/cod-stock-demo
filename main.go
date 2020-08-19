@@ -276,7 +276,6 @@ func parseTS(symbol string) {
 			log.Println(err)
 		}
 	}
-	getTSDB(symbol)
 }
 
 func getTSDB(symbol string) (times []int64, prices []float32) {
@@ -309,6 +308,8 @@ func getTSDB(symbol string) (times []int64, prices []float32) {
 }
 
 func IntraHandler(c *gin.Context) {
+	log.Println("About to parse:", strings.ToUpper(c.Param("tickerID")))
+	parseTS(strings.ToUpper(c.Param("tickerID")))
 	times, prices := getTSDB(strings.ToUpper(c.Param("tickerID")))
 	c.Header("Content-Type", "application/json")
 	c.JSON(http.StatusOK, gin.H{
