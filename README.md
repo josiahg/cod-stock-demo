@@ -1,6 +1,6 @@
 # Cloudera Operational Database Demo
 
-This application demonstrates that modern web applications can be easily built leveraging Cloudera Operational Database as a data store.
+This app demonstrates modern web apps can be easily built using Cloudera Operational Database as a data store.
 
 # Quick Start
 
