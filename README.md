@@ -10,9 +10,9 @@ This app demonstrates modern web apps can be easily built using Cloudera Operati
 
 [Golang](https://golang.org/)
 
-[Reactjs](https://reactjs.org/)
+[React](https://reactjs.org/)
 
-[Uplot](https://github.com/leeoniya/uPlot)
+[uPlot](https://github.com/leeoniya/uPlot)
 
 [calcite-avatica-go](https://github.com/apache/calcite-avatica-go)
 
