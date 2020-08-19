@@ -6,8 +6,8 @@ class Quotes extends React.Component {
 	render() {
 		if (this.props.quotes) {
 			return (
-				<div>
-					<center><h1>Latest</h1></center>
+				<div class="text-center">
+					<h1>Latest</h1>
 					{this.props.quotes.map(quote => (
 						<div class="card text-center">
 							<div class="card-body">
@@ -110,14 +110,8 @@ class SingleStock extends React.Component {
 
 			return (
 				<div className="container">
-					<div className="row">
-						<div className="col-xs-8 col-xs-offset-2 jumbotron text-center">
-							<h1>Stonks!</h1>
-							<p>Invest with the wisdom of the crowd.</p>
-						</div>
-					</div>
+                    <NavBar />
 					<div className="row text-center">
-						{/*<h1>Stonks! - {this.props.stock}</h1>*/}
 						<center>
 							<Chart options={opts} data={data} />
 						</center>
@@ -140,6 +134,25 @@ class Chart extends React.Component {
 	render() {
 		return <div ref={el => (this.el = el)} />
 	}
+}
+
+class NavBar extends React.Component {
+    render() {
+        return (
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">Stonks!</a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="#">Invest with the wisdom of the crowd.</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        )
+    }
 }
 
 class App extends React.Component {
@@ -177,33 +190,34 @@ class App extends React.Component {
 	handleSubmit(event) {
 		console.log("submit:", this.state.value)
 		this.setStock(this.state.value)
-		event.preventDefault()
-	}
+        event.preventDefault()
+    }
 
-	render () {
-		if (this.state.currentStock !== null) {
-			return <SingleStock stock={this.state.currentStock}/>
-		}
-		return (
-			<div className="container">
-				<div className="row">
-					<div className="col-xs-8 col-xs-offset-2 jumbotron text-center">
-						<h1>Stonks!</h1>
-						<p>Invest with the wisdom of the crowd.</p>
-					</div>
-				</div>
-				<div className="text-center">
-					<form onSubmit={this.handleSubmit} onChange={this.handleChange}>
-						<label>
-							Stock: <input type="text" value={this.state.value} />
-						</label>
-						<input type="submit" value="Search" />
-					</form>
-				</div>
-				<Quotes quotes={this.state.quotes}/>
-			</div>
-		);
-	}
+    render () {
+        if (this.state.currentStock !== null) {
+            return <SingleStock stock={this.state.currentStock}/>
+        }
+        return (
+            <div className="container-fluid">
+                <NavBar />
+                <div class="row text-center">
+                    <div class="col-sm-4 col-sm-offset-4">
+                        <form class="form-horizontal" onSubmit={this.handleSubmit} onChange={this.handleChange}>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input class="form-control" type="text" placeholder="Symbol (try TSLA)..." value={this.state.value} />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="submit">Search</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <Quotes quotes={this.state.quotes}/>
+            </div>
+        );
+    }
 }
 
 ReactDOM.render(<App />, document.getElementById("app"));
