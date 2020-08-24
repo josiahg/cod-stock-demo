@@ -1,6 +1,8 @@
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/apache/calcite-avatica-go/v5 v5.0.0 h1:B0l4O6KGR/sRHDaAgFT+AdGFouvp5Y/B9/82ag5rhds=
 github.com/apache/calcite-avatica-go/v5 v5.0.0/go.mod h1:mbmgGJJQk6WZfh7U9z0QOa2OjS4L9w5bVMj2LD6wwVM=
+github.com/apache/calcite-avatica-go/v5 v5.0.1-0.20200814060130-0e7506499e7b h1:Fiynlg36n+J/LKQllEOPAAxnvQJ6uYFqmS0xnVfqrtU=
+github.com/apache/calcite-avatica-go/v5 v5.0.1-0.20200814060130-0e7506499e7b/go.mod h1:mbmgGJJQk6WZfh7U9z0QOa2OjS4L9w5bVMj2LD6wwVM=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=
 github.com/cpuguy83/go-md2man/v2 v2.0.0 h1:EoUDS0afbrsXAZ9YQ9jdu/mZ2sXgT1/2yyNng4PGlyM=
 github.com/cpuguy83/go-md2man/v2 v2.0.0/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=

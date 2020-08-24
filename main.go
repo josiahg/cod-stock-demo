@@ -62,16 +62,28 @@ type cleanquote struct {
 }
 
 var db *sql.DB
+var bdb *sql.DB
 
 func main() {
-	url := "http://localhost:8765/"
+	//url := "http://localhost:8765/" // testing
+	aUser := os.Getenv("COD_USER")
+	aPassword := os.Getenv("COD_PASS")
+	url := "https://cod--19blhnic3wtj9-gateway1.od-cdp-e.z30z-14kp.cloudera.site/cod--19blhnic3wtj9/cdp-proxy-api/avatica/?authentication=BASIC&avaticaUser=" + aUser + "&avaticaPassword=" + aPassword
 
+	// Create the connection
 	var err error
 	db, err = sql.Open("avatica", url)
 	if err != nil {
 		log.Fatal("Connection: ", err)
 	}
 	defer db.Close()
+
+	// second connection for batched inserts where this gives us a performance boost
+	bdb, err = sql.Open("avatica", url+"&batching=true")
+	if err != nil {
+		log.Fatal("Connection: ", err)
+	}
+	defer bdb.Close()
 
 	//dropAndCreateDBTable(db)
 
@@ -145,8 +157,20 @@ func dropAndCreateDBTable(db *sql.DB) {
 		log.Fatal("Could not drop table", err)
 	}
 
+	log.Println("Deleting existing table...")
+	_, err = db.Exec("DROP TABLE IF EXISTS stockvals")
+	if err != nil {
+		log.Fatal("Could not drop table", err)
+	}
+
 	log.Println("Create table if not exists...")
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS stocks (symbol VARCHAR PRIMARY KEY, price FLOAT, changep VARCHAR)")
+	if err != nil {
+		log.Fatal("Create: ", err)
+	}
+
+	log.Println("Creating values table if not exists...")
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS stockvals (symbol VARCHAR NOT NULL, instant TIMESTAMP NOT NULL, price FLOAT, CONSTRAINT pk PRIMARY KEY(symbol,instant))")
 	if err != nil {
 		log.Fatal("Create: ", err)
 	}
@@ -250,11 +274,6 @@ func fetchTS(ticker string) (r []byte) {
 }
 
 func parseTS(symbol string) {
-	log.Println("Creating values table if not exists...")
-	_, err := db.Exec("CREATE TABLE IF NOT EXISTS stockvals (symbol VARCHAR NOT NULL, instant TIMESTAMP NOT NULL, price FLOAT, CONSTRAINT pk PRIMARY KEY(symbol,instant))")
-	if err != nil {
-		log.Fatal("Create: ", err)
-	}
 
 	testJson := fetchTS(symbol)
 	var result map[string]interface{}
@@ -263,6 +282,7 @@ func parseTS(symbol string) {
 	times := result["Time Series (5min)"].(map[string]interface{})
 
 	log.Println("Upsert value rows...")
+	stmt, _ := bdb.Prepare("UPSERT INTO stockvals VALUES (?, ?, ?)")
 	for key, value := range times {
 		vals := value.(map[string]interface{})
 
@@ -270,10 +290,14 @@ func parseTS(symbol string) {
 		if err != nil {
 			log.Println(err)
 		}
-		_, err = db.Exec("UPSERT INTO stockvals VALUES (?, ?, ?)", symbol, key, closeprice)
+		_, err = stmt.Exec(symbol, key, closeprice)
 		if err != nil {
 			log.Println(err)
 		}
+	}
+	err := stmt.Close()
+	if err != nil {
+		log.Println(err)
 	}
 }
 
@@ -307,7 +331,6 @@ func getTSDB(symbol string) (times []int64, prices []float32) {
 }
 
 func IntraHandler(c *gin.Context) {
-	log.Println("About to parse:", strings.ToUpper(c.Param("tickerID")))
 	parseTS(strings.ToUpper(c.Param("tickerID")))
 	times, prices := getTSDB(strings.ToUpper(c.Param("tickerID")))
 	c.Header("Content-Type", "application/json")
