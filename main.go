@@ -15,7 +15,7 @@ import (
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 
-	_ "github.com/apache/calcite-avatica-go"
+	_ "github.com/apache/calcite-avatica-go/v5"
 )
 
 /* TODO:
@@ -75,13 +75,11 @@ func main() {
 
 	//dropAndCreateDBTable(db)
 
-	parseTS("IBM")
-	parseTS("CLDR")
-	parseTS("MSFT")
-
 	putTickerDB(fetchTicker("msft"), db)
 	putTickerDB(fetchTicker("IBM"), db)
-	putTickerDB(fetchTicker("CLDR"), db)
+
+	parseTS("IBM")
+	parseTS("MSFT")
 
 	router := gin.Default()
 
@@ -156,6 +154,7 @@ func dropAndCreateDBTable(db *sql.DB) {
 
 func putTickerDB(q quote, db *sql.DB) {
 	log.Println("Upsert rows...")
+	log.Println(q)
 	_, err := db.Exec("UPSERT INTO stocks VALUES (?, ?, ?)", q.Symbol, q.Price, q.ChangeP)
 	if err != nil {
 		log.Println(err)
@@ -198,7 +197,6 @@ func getTickersDB(count int, db *sql.DB) (qs []cleanquote) {
 }
 
 func ListHandler(c *gin.Context) {
-	//res := []cleanquote{{"CLDR", 12.40}}
 	res := getTickersDB(10, db)
 	c.Header("Content-Type", "application/json")
 	c.JSON(http.StatusOK, res)
@@ -261,6 +259,7 @@ func parseTS(symbol string) {
 	testJson := fetchTS(symbol)
 	var result map[string]interface{}
 	json.Unmarshal([]byte(testJson), &result)
+	//log.Println(result)
 	times := result["Time Series (5min)"].(map[string]interface{})
 
 	log.Println("Upsert value rows...")

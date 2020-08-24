@@ -105,7 +105,7 @@ class NavBar extends React.Component {
             <nav class="navbar navbar-default">
                 <div class="container-fluid">
                     <div class="navbar-header">
-                        <a class="navbar-brand" href="#">Stonks!</a>
+                        <a class="navbar-brand" href="/">Stocks!</a>
                     </div>
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
                         <ul class="nav navbar-nav navbar-right">
