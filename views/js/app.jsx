@@ -34,7 +34,7 @@ class SingleStock extends React.Component {
 	}
 
 	componentDidMount = () => {
-		fetch('http://localhost/api/intraday/' + this.props.stock)
+		fetch('/api/intraday/' + this.props.stock)
 			.then(res => res.json())
 			.then((data) => {
 				console.log("Data", data)
@@ -132,7 +132,7 @@ class App extends React.Component {
 	}
 
 	componentDidMount = () => {
-		fetch('http://localhost/api/list')
+		fetch('/api/list')
 			.then(res => res.json())
 			.then((data) => {
 				console.log("Data", data)

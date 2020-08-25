@@ -82,7 +82,7 @@ func main() {
 	api.GET("/intraday/:tickerID", IntraHandler)
 
 	// Start and run the server
-	router.Run(":80")
+	router.Run()
 
 }
 
