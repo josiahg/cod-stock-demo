@@ -43,7 +43,7 @@ By default the app will run on port 8080 - you can access it at http://localhost
 
 Don't have a CDP account? Want to spin this up quickly?
 
-Pull down and run the `cod-local` Docker image
+Pull down and run the [cod-local](https://github.com/josiahg/cod-local) Docker image
 
 ```
 $ docker pull josiahgoodson/cod-local
