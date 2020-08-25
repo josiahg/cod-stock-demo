@@ -51,6 +51,18 @@ class SingleStock extends React.Component {
 
         if (!isLoaded) {
             return <div>Loading...</div>
+        } else if (intra.prices.length < 1) {
+            return (
+                <div className="container">
+                    <NavBar />
+                    <div className="row text-center">
+                        <center>
+                            <h1>No data found for symbol '{this.props.stock.toUpperCase()}'</h1>
+                            Make sure this is a valid symbol, or try your request again.
+                        </center>
+                    </div>
+                </div>
+            )
         } else {
             var lineColor
             if (intra.prices[0] < intra.prices[intra.prices.length - 1])
@@ -59,7 +71,7 @@ class SingleStock extends React.Component {
                 lineColor = "red"
 
             const opts = {
-                title: this.props.stock,
+                title: this.props.stock.toUpperCase(),
                 width: 400,
                 height: 300,
                 series: [
