@@ -66,7 +66,7 @@ func main() {
 	}
 	defer bdb.Close()
 
-	dropAndCreateDBTable(db)
+	createDBTables(db)
 
 	putTickerDB(fetchTicker("msft"), db)
 	putTickerDB(fetchTicker("IBM"), db)
@@ -126,7 +126,7 @@ func fetchTicker(ticker string) (q quote) {
 	return GQuote.Quote
 }
 
-func dropAndCreateDBTable(db *sql.DB) {
+func dropDBTables(db *sql.DB) {
 	log.Println("Deleting existing table...")
 	_, err := db.Exec("DROP TABLE IF EXISTS stocks")
 	if err != nil {
@@ -138,9 +138,11 @@ func dropAndCreateDBTable(db *sql.DB) {
 	if err != nil {
 		log.Fatal("Could not drop table", err)
 	}
+}
 
+func createDBTables(db *sql.DB) {
 	log.Println("Create table if not exists...")
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS stocks (symbol VARCHAR PRIMARY KEY, price FLOAT, changep VARCHAR)")
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS stocks (symbol VARCHAR PRIMARY KEY, price FLOAT, changep VARCHAR)")
 	if err != nil {
 		log.Fatal("Create: ", err)
 	}
@@ -309,7 +311,8 @@ func ListHandler(c *gin.Context) {
 }
 
 func ResetHandler(c *gin.Context) {
-	dropAndCreateDBTable(db)
+	dropDBTables(db)
+	createDBTables(db)
 	c.Header("ContentType", "application/json")
 	c.JSON(http.StatusOK, gin.H{
 		"status": "Tables dropped and recreated",
