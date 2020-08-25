@@ -80,6 +80,7 @@ func main() {
 	api.GET("/ticker/:tickerID", TickerHandler)
 	api.GET("/list", ListHandler)
 	api.GET("/intraday/:tickerID", IntraHandler)
+	api.GET("/reset", ResetHandler)
 
 	// Start and run the server
 	router.Run()
@@ -229,7 +230,6 @@ func fetchTS(ticker string) (r []byte) {
 }
 
 func parseTS(symbol string) {
-
 	testJson := fetchTS(symbol)
 	var result map[string]interface{}
 	json.Unmarshal([]byte(testJson), &result)
@@ -303,6 +303,14 @@ func ListHandler(c *gin.Context) {
 	res := getTickersDB(10, db)
 	c.Header("Content-Type", "application/json")
 	c.JSON(http.StatusOK, res)
+}
+
+func ResetHandler(c *gin.Context) {
+	dropAndCreateDBTable(db)
+	c.Header("ContentType", "application/json")
+	c.JSON(http.StatusOK, gin.H{
+		"status": "Tables dropped and recreated",
+	})
 }
 
 func TickerHandler(c *gin.Context) {

@@ -1,102 +1,102 @@
 class Quotes extends React.Component {
-	constructor(props) {
-		super(props)
-	}
+    constructor(props) {
+        super(props)
+    }
 
-	render() {
-		if (this.props.quotes) {
-			return (
-				<div class="text-center">
-					<h1>Latest</h1>
-					{this.props.quotes.map(quote => (
-						<div class="card text-center">
-							<div class="card-body">
-								<h5 class="card-title">{quote.symbol}</h5>
+    render() {
+        if (this.props.quotes) {
+            return (
+                <div class="text-center">
+                    <h1>Latest</h1>
+                    {this.props.quotes.map(quote => (
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">{quote.symbol}</h5>
                                 <p class="card-text" >${quote.price} <span style={{color: parseFloat(quote.changep) >= 0 ? "green" : "red"}}>({quote.changep})</span></p>
-							</div>
-						</div>
-					))}
-				</div>
-			)
-		} else {
-			return (<div></div>)
-		}
-	}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )
+        } else {
+            return (<div></div>)
+        }
+    }
 }
 
 class SingleStock extends React.Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			isLoaded: false,
-			intra: []
-		}
-	}
+    constructor(props) {
+        super(props)
+        this.state = {
+            isLoaded: false,
+            intra: []
+        }
+    }
 
-	componentDidMount = () => {
-		fetch('/api/intraday/' + this.props.stock)
-			.then(res => res.json())
-			.then((data) => {
-				console.log("Data", data)
-				this.setState({
-					isLoaded: true,
-					intra:data
-				})
-			})
-			.catch(console.log)
-	}
+    componentDidMount = () => {
+        fetch('/api/intraday/' + this.props.stock)
+            .then(res => res.json())
+            .then((data) => {
+                console.log("Data", data)
+                this.setState({
+                    isLoaded: true,
+                    intra:data
+                })
+            })
+            .catch(console.log)
+    }
 
-	render() {
-		const { isLoaded, intra } = this.state
+    render() {
+        const { isLoaded, intra } = this.state
 
-		if (!isLoaded) {
-			return <div>Loading...</div>
-		} else {
-			var lineColor
-			if (intra.prices[0] < intra.prices[intra.prices.length - 1])
-				lineColor = "green"
-			else
-				lineColor = "red"
+        if (!isLoaded) {
+            return <div>Loading...</div>
+        } else {
+            var lineColor
+            if (intra.prices[0] < intra.prices[intra.prices.length - 1])
+                lineColor = "green"
+            else
+                lineColor = "red"
 
-			const opts = {
-				title: this.props.stock,
-				width: 400,
-				height: 300,
-				series: [
-					{},
-					{
-						stroke: lineColor
-					}
-				]
-			};
-			const data = [intra.times, intra.prices]
+            const opts = {
+                title: this.props.stock,
+                width: 400,
+                height: 300,
+                series: [
+                    {},
+                    {
+                        stroke: lineColor
+                    }
+                ]
+            };
+            const data = [intra.times, intra.prices]
 
-			return (
-				<div className="container">
+            return (
+                <div className="container">
                     <NavBar />
-					<div className="row text-center">
-						<center>
-							<Chart options={opts} data={data} />
-						</center>
-					</div>
-				</div>
-			)
-		}
-	}
+                    <div className="row text-center">
+                        <center>
+                            <Chart options={opts} data={data} />
+                        </center>
+                    </div>
+                </div>
+            )
+        }
+    }
 }
 
 class Chart extends React.Component {
-	constructor(props) {
-		super(props)
-	}
+    constructor(props) {
+        super(props)
+    }
 
-	componentDidMount() {
-		this.u = new uPlot(this.props.options, this.props.data, this.el)
-	}
+    componentDidMount() {
+        this.u = new uPlot(this.props.options, this.props.data, this.el)
+    }
 
-	render() {
-		return <div ref={el => (this.el = el)} />
-	}
+    render() {
+        return <div ref={el => (this.el = el)} />
+    }
 }
 
 class NavBar extends React.Component {
@@ -119,40 +119,40 @@ class NavBar extends React.Component {
 }
 
 class App extends React.Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			quotes: [{'symbol':'DEMO','price':50.00}],
-			currentStock: null,
-			value: '',
-		}
-		this.setStock = this.setStock.bind(this)
-		this.handleSubmit = this.handleSubmit.bind(this)
-		this.handleChange = this.handleChange.bind(this)
-	}
+    constructor(props) {
+        super(props)
+        this.state = {
+            quotes: [{'symbol':'DEMO','price':50.00}],
+            currentStock: null,
+            value: '',
+        }
+        this.setStock = this.setStock.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this)
+        this.handleChange = this.handleChange.bind(this)
+    }
 
-	componentDidMount = () => {
-		fetch('/api/list')
-			.then(res => res.json())
-			.then((data) => {
-				console.log("Data", data)
-				this.setState({ quotes:data })
-			})
-			.then(console.log("updated state",this.state))
-			.catch(console.log)
-	}
+    componentDidMount = () => {
+        fetch('/api/list')
+            .then(res => res.json())
+            .then((data) => {
+                console.log("Data", data)
+                this.setState({ quotes:data })
+            })
+            .then(console.log("updated state",this.state))
+            .catch(console.log)
+    }
 
-	setStock(symbol) {
-		this.setState(state => ({ currentStock:symbol }))
-	}
+    setStock(symbol) {
+        this.setState(state => ({ currentStock:symbol }))
+    }
 
-	handleChange(event) {
-		this.setState({value: event.target.value});
-	}
+    handleChange(event) {
+        this.setState({value: event.target.value});
+    }
 
-	handleSubmit(event) {
-		console.log("submit:", this.state.value)
-		this.setStock(this.state.value)
+    handleSubmit(event) {
+        console.log("submit:", this.state.value)
+        this.setStock(this.state.value)
         event.preventDefault()
     }
 
