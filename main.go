@@ -44,20 +44,21 @@ func main() {
 	apikey = os.Getenv("AV_API_KEY")
 	aUser := os.Getenv("COD_USER")
 	aPassword := os.Getenv("COD_PASS")
+	baseUrl := os.Getenv("COD_URL")
 
 	//url := "http://localhost:8765/" // testing
-	url := "https://cod--19blhnic3wtj9-gateway1.od-cdp-e.z30z-14kp.cloudera.site/cod--19blhnic3wtj9/cdp-proxy-api/avatica/?authentication=BASIC&avaticaUser=" + aUser + "&avaticaPassword=" + aPassword
+	dsn := baseUrl + "?authentication=BASIC&avaticaUser=" + aUser + "&avaticaPassword=" + aPassword
 
 	// Create the connection
 	var err error
-	db, err = sql.Open("avatica", url)
+	db, err = sql.Open("avatica", dsn)
 	if err != nil {
 		log.Fatal("Connection: ", err)
 	}
 	defer db.Close()
 
 	// second connection for batched inserts where this gives us a performance boost
-	bdb, err = sql.Open("avatica", url+"&batching=true")
+	bdb, err = sql.Open("avatica", dsn+"&batching=true")
 	if err != nil {
 		log.Fatal("Connection: ", err)
 	}
