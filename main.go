@@ -18,33 +18,6 @@ import (
 	_ "github.com/apache/calcite-avatica-go/v5"
 )
 
-/* TODO:
-- Bug fixes/hardening
-- Routing back from single stock page
-- UI refresh?
-
-5. Bonus:
-Fetch Tweets
-Store tweets in OpDB
-Render tweets
-*/
-
-/*
-{
-	"Global Quote": {
-		"01. symbol": "CLDR",
-		"02. open": "11.3200",
-		"03. high": "11.5000",
-		"04. low": "11.2933",
-		"05. price": "11.3800",
-		"06. volume": "1647629",
-		"07. latest trading day": "2020-08-17",
-		"08. previous close": "11.2600",
-		"09. change": "0.1200",
-		"10. change percent": "1.0657%"
-	}
-}
-*/
 type globalQuote struct {
 	Quote quote `json:"Global Quote"`
 }
@@ -64,10 +37,15 @@ type cleanquote struct {
 var db *sql.DB
 var bdb *sql.DB
 
+var apikey string
+
 func main() {
-	//url := "http://localhost:8765/" // testing
+	// Get config from environment variables
+	apikey = os.Getenv("AV_API_KEY")
 	aUser := os.Getenv("COD_USER")
 	aPassword := os.Getenv("COD_PASS")
+
+	//url := "http://localhost:8765/" // testing
 	url := "https://cod--19blhnic3wtj9-gateway1.od-cdp-e.z30z-14kp.cloudera.site/cod--19blhnic3wtj9/cdp-proxy-api/avatica/?authentication=BASIC&avaticaUser=" + aUser + "&avaticaPassword=" + aPassword
 
 	// Create the connection
@@ -98,23 +76,17 @@ func main() {
 	router.Use(static.Serve("/", static.LocalFile("./views", true)))
 
 	api := router.Group("/api")
-	api.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
 
 	api.GET("/ticker/:tickerID", TickerHandler)
 	api.GET("/list", ListHandler)
 	api.GET("/intraday/:tickerID", IntraHandler)
 
 	// Start and run the server
-	router.Run(":3000")
+	router.Run(":80")
 
 }
 
 func fetchTicker(ticker string) (q quote) {
-	apikey := os.Getenv("AV_API_KEY")
 	url := "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" + ticker + "&apikey=" + apikey
 	avClient := http.Client{
 		Timeout: time.Second * 10,
@@ -220,24 +192,7 @@ func getTickersDB(count int, db *sql.DB) (qs []cleanquote) {
 	return res
 }
 
-func ListHandler(c *gin.Context) {
-	res := getTickersDB(10, db)
-	c.Header("Content-Type", "application/json")
-	c.JSON(http.StatusOK, res)
-}
-
-func TickerHandler(c *gin.Context) {
-	q := getTickerDB(strings.ToUpper(c.Param("tickerID")), db)
-	c.Header("Content-Type", "application/json")
-	c.JSON(http.StatusOK, gin.H{
-		"symbol":  q.Symbol,
-		"price":   q.Price,
-		"changep": q.ChangeP,
-	})
-}
-
 func fetchTS(ticker string) (r []byte) {
-	apikey := os.Getenv("AV_API_KEY")
 	url := "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=" + ticker + "&interval=5min&apikey=" + apikey
 	avClient := http.Client{
 		Timeout: time.Second * 10,
@@ -337,5 +292,21 @@ func IntraHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"times":  times,
 		"prices": prices,
+	})
+}
+
+func ListHandler(c *gin.Context) {
+	res := getTickersDB(10, db)
+	c.Header("Content-Type", "application/json")
+	c.JSON(http.StatusOK, res)
+}
+
+func TickerHandler(c *gin.Context) {
+	q := getTickerDB(strings.ToUpper(c.Param("tickerID")), db)
+	c.Header("Content-Type", "application/json")
+	c.JSON(http.StatusOK, gin.H{
+		"symbol":  q.Symbol,
+		"price":   q.Price,
+		"changep": q.ChangeP,
 	})
 }
