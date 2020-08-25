@@ -234,7 +234,11 @@ func parseTS(symbol string) {
 	var result map[string]interface{}
 	json.Unmarshal([]byte(testJson), &result)
 	//log.Println(result)
-	times := result["Time Series (5min)"].(map[string]interface{})
+	times, ok := result["Time Series (5min)"].(map[string]interface{})
+	if !ok {
+		log.Println("Time series data not found")
+		return
+	}
 
 	log.Println("Upsert value rows...")
 	stmt, _ := bdb.Prepare("UPSERT INTO stockvals VALUES (?, ?, ?)")
