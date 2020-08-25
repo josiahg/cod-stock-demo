@@ -46,8 +46,10 @@ func main() {
 	aPassword := os.Getenv("COD_PASS")
 	baseUrl := os.Getenv("COD_URL")
 
-	//url := "http://localhost:8765/" // testing
-	dsn := baseUrl + "?authentication=BASIC&avaticaUser=" + aUser + "&avaticaPassword=" + aPassword
+	dsn := baseUrl
+	if aUser != "" {
+		dsn = dsn + "?authentication=BASIC&avaticaUser=" + aUser + "&avaticaPassword=" + aPassword
+	}
 
 	// Create the connection
 	var err error
@@ -64,7 +66,7 @@ func main() {
 	}
 	defer bdb.Close()
 
-	//dropAndCreateDBTable(db)
+	dropAndCreateDBTable(db)
 
 	putTickerDB(fetchTicker("msft"), db)
 	putTickerDB(fetchTicker("IBM"), db)

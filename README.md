@@ -39,6 +39,41 @@ $ go run main.go
 
 By default the app will run on port 8080 - you can access it at http://localhost:8080/
 
+# Running locally
+
+Don't have a CDP account? Want to spin this up quickly?
+
+Pull down and run the `cod-local` Docker image
+
+```
+$ docker pull josiahgoodson/cod-local
+$ docker run -d -p 8765:8765 josiahgoodson/cod-local
+```
+
+Clone this repository
+
+```
+$ git clone https://github.com/josiahg/go-cod-demo
+$ cd go-cod-demo
+```
+
+Set the following environment variables:
+
+IMPORTANT: Do not set COD_USER or COD_PASS - authentication is not required for local instances.
+
+```
+$ export AV_API_KEY=<Your AlphaVantage API Key>
+$ export COD_URL='http://localhost:8765/?'
+```
+
+Run the app
+
+```
+$ go run main.go
+```
+
+By default the app will run on port 8080 - you can access it at http://localhost:8080/
+
 
 # Built With
 
